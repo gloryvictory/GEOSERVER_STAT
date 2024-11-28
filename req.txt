@@ -1,0 +1,4 @@
+geoserver-restconfig
+pandas
+openpyxl
+python-dotenv

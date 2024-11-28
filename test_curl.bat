@@ -1,0 +1,1 @@
+curl -v -u admin:geoserver -XGET https://localhost:8080/geoserver/rest/workspaces/test
