@@ -1,7 +1,16 @@
+# based on
+# https://github.com/GeoNode/geoserver-restconfig
+# https://github.com/geosolutions-it/geoserver-restconfig/blob/master/examples/postgislayers.py
+# https://github.com/arthurdjn/geoserver-py
+# more about ...
+# https://docs.geoserver.org/latest/en/user/rest/workspaces.html
+# https://docs.geoserver.org/latest/en/api/#1.0.0/layers.yaml
+# https://github.com/gicait/geoserver-rest
+
 from datetime import datetime
 import pandas as pd
 from geoserver.catalog import Catalog
-
+import os
 import cfg
 
 
@@ -89,11 +98,16 @@ def main():
               f"{w_name} , ")
 
     df = pd.DataFrame(res,
-                      columns=['r_name', 'r_title', 'r_projection', 'w_name', 'w_name_full','s_name', 's_host', 's_port', 's_database', 's_schema',
+                      columns=['l_name', 'l_title', 'l_projection', 'w_name', 'w_name_full','s_name', 's_host', 's_port', 's_database', 's_schema',
                                's_user', 's_dbtype'])
 
-    df.to_csv(cfg.FILE_CSV_NAME)
-    df.to_excel(cfg.FILE_XLS_NAME)
+    if os.path.isfile(cfg.FILE_CSV_NAME) and os.access(cfg.FILE_CSV_NAME, os.R_OK):
+        # print("File exists and is readable")
+        os.remove(cfg.FILE_CSV_NAME)
+        df.to_csv(cfg.FILE_CSV_NAME)
+
+    if os.path.isfile(cfg.FILE_XLS_NAME) and os.access(cfg.FILE_XLS_NAME, os.R_OK):
+        df.to_excel(cfg.FILE_XLS_NAME)
 
 
 if __name__ == '__main__':

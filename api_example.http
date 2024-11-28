@@ -1,0 +1,33 @@
+###
+GET https://localhost/geoserver/rest/workspaces/acme HTTP/1.1
+content-type: application/json
+Authorization: Basic YWRtaW46YWRtaW4x
+
+###
+GET https://localhost/geoserver/rest/workspaces
+Authorization: Basic YWRtaW46YWRtaW4x
+
+
+
+
+###
+GET https://localhost/geoserver/rest/datastores HTTP/1.1
+content-type: application/json
+Authorization: Basic YWRtaW46YWRtaW4x
+
+###
+GET https://localhost/geoserver/rest/workspaces/test HTTP/1.1
+content-type: application/json
+Authorization: Basic YWRtaW46YWRtaW4x
+
+
+###
+GET https://localhost/geoserver/rest/workspaces/W_TEST/datastores/test.json HTTP/1.1
+content-type: application/json
+Authorization: Basic YWRtaW46YWRtaW4x
+
+
+###
+GET https://localhost/geoserver/rest/layers HTTP/1.1
+content-type: application/json
+Authorization: Basic YWRtaW46YWRtaW4x
