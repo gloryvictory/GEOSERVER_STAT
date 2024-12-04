@@ -17,6 +17,96 @@ import cfg
 def main():
     cat = Catalog(cfg.GSERVER_URL, cfg.GSERVER_USER, cfg.GSERVER_PASS, validate_ssl_certificate=False )
 
+    resurses = cat.get_resources()
+    res = []
+    res2 = []
+    for resu in resurses:
+        res2.clear()
+
+        l_name = resu.name
+        l_title = resu.title
+        l_projection = resu.projection
+        w_name = resu.workspace.name
+        w_name_full = f"{w_name}:{l_name}"
+        s_name = resu.store.name if resu.store else ''
+        if hasattr(resu.store, 'connection_parameters'): # отрабатываем подключения через PostgreSQL
+            s_host = resu.store.connection_parameters['host']
+            s_port = resu.store.connection_parameters['port']
+            s_database = resu.store.connection_parameters['database']
+            s_schema = resu.store.connection_parameters['schema']
+            s_user = resu.store.connection_parameters['user']
+            s_dbtype = resu.store.connection_parameters['dbtype']
+            s_native_name = resu.native_name
+            if hasattr(resu, 'native_bbox'):
+                s_native_srs = resu.native_bbox[4]
+            else:
+                s_native_srs = ''
+
+        else:
+            s_host = ''
+            s_port = ''
+            s_database = ''
+            s_schema = ''
+            s_user = ''
+            s_dbtype = ''
+            s_native_name = ''
+            s_native_srs = ''
+
+        res2.append(l_name)
+        res2.append(l_title)
+        res2.append(l_projection)
+        res2.append(w_name)
+        res2.append(w_name_full)
+        res2.append(s_name)
+        res2.append(s_host)
+        res2.append(s_port)
+        res2.append(s_database)
+        res2.append(s_schema)
+        res2.append(s_native_name)
+        res2.append(s_user)
+        res2.append(s_dbtype)
+        res2.append(s_native_srs)
+
+        res.append(res2.copy())
+
+        print(f"{l_name}, "
+              f"{l_title} , "
+              f"{w_name} , ")
+
+    df = pd.DataFrame(res,
+                      columns=['l_name',
+                               'l_title',
+                               'l_projection',
+                               'w_name',
+                               'w_name_full',
+                               's_name',
+                               's_host',
+                               's_port',
+                               's_database',
+                               's_schema',
+                               's_native_name',
+                               's_user',
+                               's_dbtype',
+                               's_native_srs']
+                      )
+
+    if os.path.isfile(cfg.FILE_CSV_NAME) and os.access(cfg.FILE_CSV_NAME, os.R_OK):
+        # print("File exists and is readable")
+        os.remove(cfg.FILE_CSV_NAME)
+    df.to_csv(cfg.FILE_CSV_NAME)
+
+    if os.path.isfile(cfg.FILE_XLS_NAME) and os.access(cfg.FILE_XLS_NAME, os.R_OK):
+        os.remove(cfg.FILE_XLS_NAME)
+    df.to_excel(cfg.FILE_XLS_NAME)
+
+
+if __name__ == '__main__':
+    time1 = datetime.now()
+    print('Starting at :' + str(time1))
+    main()
+
+
+
     # print("пробуем достать workspaces")
     # wrksps = cat.get_workspaces()
     # # Достать все Stores которые смотрят в PG
@@ -50,68 +140,3 @@ def main():
     #
     # df = pd.DataFrame(res, columns=['wrksps_name', 'store_name', 'type', 'host', 'port', 'database', 'schema', 'user', 'dbtype', 'max connections'])
     # df.to_csv(cfg.FILE_CSV_NAME)
-
-
-    resurses = cat.get_resources()
-    res = []
-    res2 = []
-    for resu in resurses:
-        res2.clear()
-
-        l_name = resu.name
-        l_title = resu.title
-        l_projection = resu.projection
-        w_name = resu.workspace.name
-        w_name_full = f"{w_name}:{l_name}"
-        s_name = resu.store.name if resu.store else ''
-        if hasattr(resu.store, 'connection_parameters'): # отрабатываем подключения через PostgreSQL
-            s_host = resu.store.connection_parameters['host']
-            s_port = resu.store.connection_parameters['port']
-            s_database = resu.store.connection_parameters['database']
-            s_schema = resu.store.connection_parameters['schema']
-            s_user = resu.store.connection_parameters['user']
-            s_dbtype = resu.store.connection_parameters['dbtype']
-        else:
-            s_host = ''
-            s_port = ''
-            s_database = ''
-            s_schema = ''
-            s_user = ''
-            s_dbtype = ''
-
-        res2.append(l_name)
-        res2.append(l_title)
-        res2.append(l_projection)
-        res2.append(w_name)
-        res2.append(w_name_full)
-        res2.append(s_name)
-        res2.append(s_host)
-        res2.append(s_port)
-        res2.append(s_database)
-        res2.append(s_schema)
-        res2.append(s_user)
-        res2.append(s_dbtype)
-        res.append(res2.copy())
-
-        print(f"{l_name}, "
-              f"{l_title} , "
-              f"{w_name} , ")
-
-    df = pd.DataFrame(res,
-                      columns=['l_name', 'l_title', 'l_projection', 'w_name', 'w_name_full','s_name', 's_host', 's_port', 's_database', 's_schema',
-                               's_user', 's_dbtype'])
-
-    if os.path.isfile(cfg.FILE_CSV_NAME) and os.access(cfg.FILE_CSV_NAME, os.R_OK):
-        # print("File exists and is readable")
-        os.remove(cfg.FILE_CSV_NAME)
-        df.to_csv(cfg.FILE_CSV_NAME)
-
-    if os.path.isfile(cfg.FILE_XLS_NAME) and os.access(cfg.FILE_XLS_NAME, os.R_OK):
-        df.to_excel(cfg.FILE_XLS_NAME)
-
-
-if __name__ == '__main__':
-    time1 = datetime.now()
-    print('Starting at :' + str(time1))
-    main()
-
